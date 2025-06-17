@@ -71,6 +71,8 @@ class Snake:
             return True
     
     def randomApple(self):
+        # I would thoroughly like to rewrite this in a more efficient way but im not sure what else
+        # to do
         self.noApple = False
         index = randint(0, (1 + self.xLim) * (1 + self.yLim) - len(self.trail) - 1)
         for y in range(self.yLim + 1):
