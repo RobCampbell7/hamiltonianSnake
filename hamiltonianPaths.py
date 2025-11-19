@@ -56,7 +56,8 @@ def indexesAreNeighbours(i, j, m, n):
 
 def hamiltonianGridPath(m, n):
     # res, sol = [], []
-    res, sol = [], [m * n - 1]
+    res, sol, exploredNB = [], [m * n - 1], []
+    originNeighbours = neighbours(sol[0])
     def backtrack():
         if len(res) > 0:
             return
@@ -65,7 +66,8 @@ def hamiltonianGridPath(m, n):
             if indexesAreNeighbours(sol[0], sol[-1], m, n):
                 res.append(sol[:])
             return
-        elif all([i in sol for i in neighbours(sol[0], m, n)]):
+        # elif all([i in sol for i in neighbours(sol[0], m, n)]):
+        elif len(exploredNB) == len(originNeighbours):
             return
         
         validNeighbours = list(filter(lambda i : i not in sol, neighbours(sol[-1], m, n)))
@@ -76,9 +78,16 @@ def hamiltonianGridPath(m, n):
             print(sol)
             return
         for i in validNeighbours:
-            sol.append(i)
-            backtrack()
-            sol.pop()
+            if i in originNeighbours:
+                exploredNB.append(i)
+                sol.append(i)
+                backtrack()
+                exploredNB.pop()
+                sol.pop()
+            else:
+                sol.append(i)
+                backtrack()
+                sol.pop()
 
     # print(sol[0])
     backtrack()
