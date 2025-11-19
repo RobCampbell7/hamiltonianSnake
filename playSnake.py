@@ -1,6 +1,6 @@
 import pygame
 from pygame.locals import *
-from snake import Snake, direction
+from snakePlayer import Snake, direction
 from time import time
 
 squareSize = 20
