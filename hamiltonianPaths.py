@@ -65,6 +65,8 @@ def hamiltonianGridPath(m, n):
             if indexesAreNeighbours(sol[0], sol[-1], m, n):
                 res.append(sol[:])
             return
+        elif all([i in sol for i in neighbours(sol[0], m, n)]):
+            return
         
         validNeighbours = list(filter(lambda i : i not in sol, neighbours(sol[-1], m, n)))
         # print()
