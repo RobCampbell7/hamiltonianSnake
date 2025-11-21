@@ -6,18 +6,22 @@ from time import time
 squareSize = 20
 boardDim = (20, 20)
 moveTime = 0.1
-class Square(pygame.sprite.Sprite):
-    def __init__(self, colour=(25, 25, 25)):
-        super(Square, self).__init__()
-        self.surf = pygame.Surface((squareSize - 2, squareSize - 2))
-        self.surf.fill(colour)
-        self.rect = self.surf.get_rect()
+
+backgroundColour = (50, 50, 50)
+appleColour = (200, 200, 200)
+snakeColour = (0, 150, 0)
+# class Square(pygame.sprite.Sprite):
+#     def __init__(self, colour=(25, 25, 25)):
+#         super(Square, self).__init__()
+#         self.surf = pygame.Surface((squareSize - 2, squareSize - 2))
+#         self.surf.fill(colour)
+#         self.rect = self.surf.get_rect()
 
 pygame.init()
 screen = pygame.display.set_mode((boardDim[0] * squareSize, boardDim[1] * squareSize))
 screen.fill((50, 50, 50))
 
-squares = [[Square() for i in range(boardDim[0])] for j in range(boardDim[1])]
+# squares = [[Square() for i in range(boardDim[0])] for j in range(boardDim[1])]
 
 snake = Snake(limits=boardDim, length=3)
 apple = snake.randomApple()
@@ -42,20 +46,31 @@ while stop != True:
     
     if time() - lastMoveTime > moveTime:
         lastMoveTime = time()
-        snake.move(apple)
-        if snake.noApple == True:
-            apple = snake.randomApple()
-        pos = snake.position()
+        snake.move()
+
+        snakeBody = snake.position()
+        screen.fill(backgroundColour)
+        for i in range(1, len(snakeBody)):
+            # left, top = (0, 0), (0, 0)
+            # width, height = 0, 0
+            left = min(snakeBody[i], snakeBody[i - 1], key = lambda p : p[0])[0] * (squareSize) + 1
+            top = min(snakeBody[i], snakeBody[i - 1], key = lambda p : p[1])[1] * (squareSize) + 1
+            if snakeBody[i][0] == snakeBody[i - 1][0]:
+                width = (squareSize) - 2
+                height = (squareSize) * 2 - 2
+            elif snakeBody[i][1] == snakeBody[i - 1][1]:
+                width = (squareSize) * 2 - 2
+                height = (squareSize) - 2
+            else:
+                print("OH SHIT")
+
+            pygame.draw.rect(screen,
+                            snakeColour,
+                            pygame.Rect(left, top, width, height))
+        pygame.draw.rect(screen, appleColour, pygame.Rect(snake.apple[0] * squareSize + 1,
+                                                          snake.apple[1] * squareSize + 1,
+                                                          squareSize - 2, squareSize - 2))
         
-        for j in range(boardDim[1]):
-            for i in range(boardDim[0]):
-                if (i, j) in pos:
-                    squares[i][j].surf.fill((0, 150, 0))
-                elif (i, j) == apple:
-                    squares[i][j].surf.fill((150, 0, 0))
-                else:
-                    squares[i][j].surf.fill((25, 25, 25))
-                screen.blit(squares[i][j].surf, (1 + squareSize * i, 1 + squareSize * j))
         if snake.isAlive() == False:
             stop = True
         pygame.display.flip()

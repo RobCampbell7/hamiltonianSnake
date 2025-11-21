@@ -39,21 +39,20 @@ class Snake:
         self.direction = direction.right
         self.trail = []
         self.first = ignoreFirst
-        self.noApple = True
         for i in range(length - 1):
             if i == 0:
                 self.trail.append(move(start, opposite(self.direction)))
             else:
                 self.trail.append(move(self.trail[-1], opposite(self.direction)))
     
-    def move(self, applePos=(-1, 1)):
+    def move(self):
         if self.first == False:
             self.trail = [self.head] + self.trail
             self.head = move(self.head, self.direction)
-            if self.head != applePos:
+            if self.head != self.apple:
                 self.trail = self.trail[:-1]
             else:
-                self.noApple = True
+                self.randomApple()
         else:
             self.first = False
 
@@ -71,14 +70,13 @@ class Snake:
             return True
     
     def randomApple(self):
-        # I would thoroughly like to rewrite this in a more efficient way but im not sure what else
-        # to do
-        self.noApple = False
-        index = randint(0, (1 + self.xLim) * (1 + self.yLim) - len(self.trail) - 1)
-        for y in range(self.yLim + 1):
-            for x in range(self.xLim + 1):
-                if (x, y) not in self.position():
-                    if index == 0:
-                        return (x, y)
-                    else:
-                        index -= 1
+        snakePos = self.position()
+        possible = []
+        for x in range(1 + self.xLim):
+            for y in range(1 + self.yLim):
+                if (x, y) not in snakePos:
+                    possible.append((x, y))
+        if len(possible) > 0:
+            self.apple = choice(possible)
+        else:
+            self.apple = (-1, -1)

@@ -1,9 +1,9 @@
-
 def indexToCoord(index, m, n):
     # for an m x n grid
     return (index % m, index // m)
 
 def coordToIndex(x, y, m, n):
+    # converts a coord to an index
     return y * m + x
 
 def rotateCycle(cycle, m, n):
@@ -23,7 +23,7 @@ def hamilCycle(m, n):
         m, n = n, m
 
     cycle = [*range(m)]
-    print(cycle)
+    # print(cycle)
     leftToRight = False
     for row in range(1, n):
         newRow = range(row * m + 1, (row + 1) * m)
@@ -53,9 +53,8 @@ def indexesAreNeighbours(i, j, m, n):
         return False
 
 if __name__=="__main__":
-    m, n = 100, 100
+    m, n = 25, 26
     c = hamilCycle(m, n)
-    print()
     print(c)
 
     for i in range(m * n):
