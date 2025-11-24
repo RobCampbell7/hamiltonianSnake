@@ -14,7 +14,7 @@ def rotateCycle(cycle, m, n):
     
     return newCycle
 
-def hamilCycle(m, n):
+def hamilCycleIndexes(m, n):
     rotate = False
     if m % 2 == 1 and n % 2 == 1:
         raise Exception("m or n must have a factor of 2")
@@ -45,22 +45,35 @@ def hamilCycle(m, n):
     else:
         return cycle
 
+def hamilCycleCoords(m, n):
+    cycle = hamilCycleIndexes(m, n)
+    return [indexToCoord(i, m, n) for i in cycle]
+
 def indexesAreNeighbours(i, j, m, n):
     d = abs(i - j)
     if d == 1 or d == m:
         return True
     else:
         return False
+    
+def coordsAreNeighbours(p0, p1, m, n):
+    dy = abs(p1[1] - p0[1])
+    dx = abs(p1[0] - p0[0])
+    if (dy == 0 and dx == 1) or (dy == 1 and dx == 0):
+        return True
+    else:
+        return False
 
-if __name__=="__main__":
+if __name__ == "__main__":
     m, n = 25, 26
-    c = hamilCycle(m, n)
+    c = hamilCycleIndexes(m, n)
     print(c)
 
     for i in range(m * n):
         assert i in c
-
         assert indexesAreNeighbours(c[i - 1], c[i], m, n)
+    
+    c = hamilCycleCoords(m, n)
     
 
     

@@ -1,4 +1,7 @@
 
 # RIGHT lets implement this shit
 
-def hamiltonianSnake
+class hamiltonianSnake:
+    def __init__(self, startPos, length, m, n):
+        # do stuff
+        self.snakePos = []
