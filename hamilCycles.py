@@ -66,14 +66,15 @@ def coordsAreNeighbours(p0, p1, m, n):
 
 if __name__ == "__main__":
     m, n = 25, 26
+
     c = hamilCycleIndexes(m, n)
-    print(c)
 
     for i in range(m * n):
         assert i in c
         assert indexesAreNeighbours(c[i - 1], c[i], m, n)
     
     c = hamilCycleCoords(m, n)
-    
-
-    
+    for i in range(m * n):
+        x0, y0 = indexToCoord(i, m, n)
+        assert (x0, y0) in c
+        assert coordsAreNeighbours(c[i], c[i - 1], m, n)

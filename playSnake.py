@@ -5,9 +5,9 @@ from time import time
 
 squareSize = 20
 boardDim = (20, 20)
-moveTime = 0.1
+moveTime = 1/6
 
-backgroundColour = (50, 50, 50)
+backgroundColour = (25, 25, 25)
 appleColour = (200, 200, 200)
 snakeColour = (0, 150, 0)
 # class Square(pygame.sprite.Sprite):
