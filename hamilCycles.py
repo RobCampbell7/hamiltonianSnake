@@ -156,6 +156,25 @@ def splitCycle(c, m, n):
     c2 = c[i1:j1 + 1]
     return c1, c2
 
+def neighboursPointInCycle(i, c, m, n):
+    for j in c:
+        if indexesAreNeighbours(i, j, m, n):
+            return True
+    return False
+
+def mergeCycles(c1, c2, m, n):
+    # c1 should be the larger cycle and c2 the smaller if this is not the case we correct it
+    if len(c1) > len(c2):
+        c1, c2 = c2, c1
+
+    validNeighbouringIndexes = [
+        i for i in range(len(c1)) if neighboursPointInCycle(c1[i], c2, m, n) and neighboursPointInCycle(c1[(i + 1)%len(c1)], c2, m, n)
+    ]
+    shuffle(validNeighbouringIndexes)
+
+    # for i1 in validNeighbouringIndexes:
+        
+
 if __name__ == "__main__":
     m, n = 6, 6
     c = hamilCycleIndexes(m, n)
@@ -168,3 +187,5 @@ if __name__ == "__main__":
     printCycle(c1, m, n)
     print("\n")
     printCycle(c2, m, n)
+
+    mergeCycles(c1, c2, m, n)
