@@ -53,8 +53,9 @@ def hamilCycleCoords(m, n):
     return [indexToCoord(i, m, n) for i in cycle]
 
 def indexesAreNeighbours(i, j, m, n):
-    d = abs(i - j)
-    if d == 1 or d == m:
+    dx = abs(i % m - j % m)
+    dy = abs(i // m - j // m)
+    if dx + dy == 1:
         return True
     else:
         return False
@@ -167,40 +168,16 @@ def splitCycle(c, m, n):
 
         if found == True:
             break
-        # j1, j2 = 0, 0
-        # while j2 == 0 and j1 < m*n:
-        #     # print(j1)
-        #     if indexesAreNeighbours(c[j1], c[i1], m, n) and j1 != i1 and j1 != i2 and isCorner(c[j1], c, m, n) == False:
-        #         for jn in neighbours(c[j1], m, n):
-        #             if jn != i1 and jn != i2 and isCorner(c[jn], c, m, n) == False:
-        #                 j2 = jn
-        #                 break
-        #     j1 += 1
-        # if j2 != 0:
-        #     break
-    # i1, i2, j1, j2 = min(c[i1], c[j1]), min(c[i2], c[j2]), max(c[i1], c[j1]), max(c[i2], c[j2])
-    print()
-    print("   i1: {0},    i2 : {1},    j1: {2},    j2: {3}".format(i1, i2, j1, j2))
-    print("c[i1]: {0}, c[i2] : {1}, c[j1]: {2}, c[j2]: {3}".format(c[i1], c[i2], c[j1], c[j2]))
-    # i1, i2, j1, j2 = min(i1, j1), min(i2, j2), max(i1, j1), max(i2, j2)
+
     if j1 < i1:
         i1, i2, j1, j2 = j1, j2, i1, i2
     if i2 > i1:
         i1, i2 = i2, i1
         j1, j2 = j2, j1
-    print()
-    print("   i1: {0},    i2 : {1},    j1: {2},    j2: {3}".format(i1, i2, j1, j2))
-    print("c[i1]: {0}, c[i2] : {1}, c[j1]: {2}, c[j2]: {3}".format(c[i1], c[i2], c[j1], c[j2]))
-    print()
-    # i1, i2 = sorted((i1, i2))
+
     c1 = c[:i2 + 1] + c[j2:]
     c2 = c[i1:j1 + 1]
     return c1, c2
-
-def augmnetCycle(path, m, n):
-    i1 = randint(0, m * n - 2)
-    j1 = 0
-    
 
 if __name__ == "__main__":
     m, n = 6, 6
