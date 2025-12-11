@@ -2,11 +2,9 @@ from random import choice, randint, shuffle
 
 
 def indexToCoord(index, m, n):
-    # for an m x n grid
     return (index % m, index // m)
 
 def coordToIndex(x, y, m, n):
-    # converts a coord to an index
     return y * m + x
 
 def rotateCycle(cycle, m, n):
@@ -26,7 +24,6 @@ def hamilCycleIndexes(m, n):
         m, n = n, m
 
     cycle = [*range(m)]
-    # print(cycle)
     leftToRight = False
     for row in range(1, n):
         newRow = range(row * m + 1, (row + 1) * m)
@@ -34,14 +31,10 @@ def hamilCycleIndexes(m, n):
             newRow = reversed(newRow)
 
         cycle.extend(newRow)
-        # print(list(newRow))
         leftToRight = not leftToRight
 
-    # lastRow = []
     for row in reversed(range(1, n)):
-        # lastRow.append(row * m)
         cycle.append(row * m)
-    # print(lastRow)
 
     if rotate == True:
         return rotateCycle(cycle, m, n)
@@ -68,13 +61,6 @@ def coordsAreNeighbours(p0, p1, m, n):
     else:
         return False
 
-# def isCorner(i, c, m, n):
-#     if c[i] == 0 or c[i] == m * n - 1 or c[i] == m * (n - 1) or c[i] == m - 1:
-#         return True
-#     elif abs(c[i - 1] - c[i]) != abs(c[i] - c[(i + 1) % (m * n)]):
-#         return True
-#     else:
-#         return False
 def isCorner(i, c, m, n):
     if c[i] == 0 or c[i] == m * n - 1 or c[i] == m * (n - 1) or c[i] == m - 1:
         return True
@@ -94,17 +80,11 @@ def areCycleAdjacent(i, j, c):
     if i not in c or j not in c:
         return False
     
-    # i = i % len(c)
-    # j = j % len(c)
-    # print("are {0} and {1} adjacent? ".format(c.index(i), c.index(j)), end = "")
     if i == c[0] and j == c[-1] or j == c[0] and i == c[-1]:
-        # print("yes")
         return True
     if abs(c.index(i) - c.index(j)) == 1:
-        # print("yes")
         return True
     else:
-        # print("no")
         return False
 
 def printCycle(c, m, n):
@@ -148,9 +128,6 @@ def splitCycle(c, m, n):
     for iN in possibleIndexes:
         i1 = iN
         i2 = i1 + 1
-        # print(iN)
-        # i1 and i2 are sequential points in the cycle that neighbour each other
-        # j1 and j2 are two sequential points such that i1 neighbours j1 and i2 neighbours j2
         found = False
         for jn in range(m * n):
             if jn not in (i1, i2):
@@ -181,22 +158,9 @@ def splitCycle(c, m, n):
 
 if __name__ == "__main__":
     m, n = 6, 6
-    # printGrid(m, n)
     c = hamilCycleIndexes(m, n)
     printCycle(c, m, n)
 
-    # print()
-    # printCycle([0, 1], m, n)
-
-    # cycle adjacency test
-    # for cycleIndex in range(m * n):
-    #     assert areCycleAdjacent(c[cycleIndex], c[(cycleIndex + 1) % (m*n)], c)
-    #     assert areCycleAdjacent(c[cycleIndex], c[cycleIndex - 1], c)
-    #     assert not all([areCycleAdjacent(c[cycleIndex], c[i], c) for i in range(m * n) if i not in ((cycleIndex + 1) % (m*n), cycleIndex - 1)])
-    #     # print(c[cycleIndex], end = ", ")
-    # print()
-    # printCycle(c, m, n)
-    # input()
     c1, c2 = splitCycle(c, m, n)
     print(c1)
     print(c2)
@@ -204,12 +168,3 @@ if __name__ == "__main__":
     printCycle(c1, m, n)
     print("\n")
     printCycle(c2, m, n)
-    # for i in range(m * n):
-    #     assert i in c
-    #     assert indexesAreNeighbours(c[i - 1], c[i], m, n)
-    
-    # c = hamilCycleCoords(m, n)
-    # for i in range(m * n):
-    #     x0, y0 = indexToCoord(i, m, n)
-    #     assert (x0, y0) in c
-    #     assert coordsAreNeighbours(c[i], c[i - 1], m, n)
