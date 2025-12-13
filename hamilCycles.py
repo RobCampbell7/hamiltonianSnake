@@ -236,6 +236,11 @@ def isValidCycle(c, m, n):
             return False
     return True
 
+def mutateCycle(c, m, n):
+    c1, c2 = splitCycle(c, m, n)
+    c = mergeCycles(c1, c2, m, n)
+    return c
+
 if __name__ == "__main__":
     m, n = 10, 10
     c = hamilCycleIndexes(m, n)
@@ -255,21 +260,8 @@ if __name__ == "__main__":
     # print()
     # printCycle(newC, m, n)
     
-    for i in range(50):
-        c1, c2 = splitCycle(c, m, n)
-        c = mergeCycles(c1, c2, m, n)
-        # input("len(c) = " + str(len(c)))
-        if isValidCycle(c, m, n) == False:
-            print("OH SHIT")
-            printCycle(c1, m, n)
-            printCycle(c2, m, n)
-            
-            printCycle(c, m, n)
-            if len(c) != m * n:
-                raise Exception("len(c) = " + str(len(c)))
-            else:
-                raise Exception("It fucked it")
-        else:
-            printCycle(c, m, n)
+    for i in range(10000):
+        c = mutateCycle(c, m, n)
+        assert isValidCycle(c, m, n) is True
     
     printCycle(c, m, n)
