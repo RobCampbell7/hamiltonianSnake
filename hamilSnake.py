@@ -1,7 +1,7 @@
 
 # RIGHT lets implement this shit
 from random import choice
-from hamilCycles import hamilCycleCoords as hamiltonianCycle
+from hamilCycles import randHamilCycleCoords as hamiltonianCycle
 
 def up(x, y):
     return (x, y - 1)
