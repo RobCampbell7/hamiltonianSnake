@@ -12,6 +12,9 @@ def right(x, y):
 def nextPos(x, y):
     return [up(x, y), down(x, y), left(x, y), right(x, y)]
 
+def dist2(p1, p2):
+    return (p1[0] - p2[0]) ** 2 + (p1[1] - p2[1])**2
+
 def inBounds(x, y, xMin, yMin, xMax, yMax):
     if x >= xMin and x < xMax and y >= yMin and y < yMax:
         return True
@@ -71,6 +74,7 @@ class HamiltonianSnake:
         possiblePos = self.cycle.index(p)
         appleCyclePos = [*self.cycle[possiblePos:], *self.cycle].index(self.apple)
         return appleCyclePos - possiblePos
+        # return dist2(self.head, self.apple)
 
     def move(self):
         # newHead = min([p for p in nextPos(*self.head) if self.isViable(self.posInCycle(p))], key=self.distToApple)

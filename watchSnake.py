@@ -6,7 +6,7 @@ from time import time
 
 squareSize = 20
 boardDim = (20, 20)
-moveTime = 0.1
+moveTime = 0.05
 
 backgroundColour = (25, 25, 25)
 appleColour = (200, 200, 200)
