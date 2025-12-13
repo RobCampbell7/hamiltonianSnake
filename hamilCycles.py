@@ -172,7 +172,26 @@ def mergeCycles(c1, c2, m, n):
     ]
     shuffle(validNeighbouringIndexes)
 
-    # for i1 in validNeighbouringIndexes:
+    for i1 in validNeighbouringIndexes:
+        i2 = i1 + 1
+        # i1 and i2 are members of c1
+        # j1 and j2 are members of c2
+        found = False
+        for j in range(len(c2)):
+            if indexesAreNeighbours(c1[i1], c2[j], m, n) == True:
+                if indexesAreNeighbours(c1[i2], c2[j + 1], m, n) == True:
+                    j1, j2 = j, j + 1
+                    found = True
+                    break
+                elif indexesAreNeighbours(c1[i2], c2[j - 1], m, n) == True:
+                    j1, j2 = j, j - 1
+                    found = True
+                    break
+
+        if found == True:
+            break
+    
+    
         
 
 if __name__ == "__main__":
