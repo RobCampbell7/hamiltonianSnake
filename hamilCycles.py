@@ -241,6 +241,16 @@ def mutateCycle(c, m, n):
     c = mergeCycles(c1, c2, m, n)
     return c
 
+def randHamilCycleIndexes(m, n):
+    c = hamilCycleIndexes(m, n)
+    for i in range(m*n):
+        c = mutateCycle(c, m, n)
+    return c
+
+def randHamilCycleCoords(m, n):
+    c = randHamilCycleIndexes(m, n)
+    return [indexToCoord(i, m, n) for i in c]
+
 if __name__ == "__main__":
     m, n = 10, 10
     c = hamilCycleIndexes(m, n)
