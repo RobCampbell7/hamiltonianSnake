@@ -1,5 +1,3 @@
-
-# RIGHT lets implement this shit
 from random import choice
 from hamilCycles import randHamilCycleCoords as hamiltonianCycle
 
@@ -60,6 +58,7 @@ class HamiltonianSnake:
         if h == None:
             h = self.cyclePos
         # This is horrendous and messy and im hoping i can simplify it somehow
+        # its been several weeks ive not even thought about this again. will try to fix soon
         if (s <= a and a > h and s > h) or (a < h and (s > h or s <= a)):
             if (h > t and (s > h or s < t)) or (h < t and s > h and s < t):
                 return True
