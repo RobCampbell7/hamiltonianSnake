@@ -15,6 +15,9 @@ def nextPos(x, y):
 def dist2(p1, p2):
     return (p1[0] - p2[0]) ** 2 + (p1[1] - p2[1])**2
 
+def hamDist(p1, p2):
+    return abs(p1[0] - p2[0]) + abs(p1[1] - p2[1])
+
 def inBounds(x, y, xMin, yMin, xMax, yMax):
     if x >= xMin and x < xMax and y >= yMin and y < yMax:
         return True
@@ -60,21 +63,32 @@ class HamiltonianSnake:
             t = self.posInCycle(self.trail[-1])
         if h == None:
             h = self.cyclePos
-        # This is horrendous and messy and im hoping i can simplify it somehow
-        # its been several weeks ive not even thought about this again. will try to fix soon
-        if (s <= a and a > h and s > h) or (a < h and (s > h or s <= a)):
-            if (h > t and (s > h or s < t)) or (h < t and s > h and s < t):
-                return True
+        
+        a = (a - t) % (self.m * self.n)
+        h = (h - t) % (self.m * self.n)
+        s = (s - t) % (self.m * self.n)
+        t = 0
+        if s < h or s > a:
+            return False
+        else:
+            return True
+
+        
+        # # This is horrendous and messy and im hoping i can simplify it somehow
+        # # its been several weeks ive not even thought about this again. will try to fix soon
+        # if (s <= a and a > h and s > h) or (a < h and (s > h or s <= a)):
+        #     if (h > t and (s > h or s < t)) or (h < t and s > h and s < t):
+        #         return True
         
         return False
 
     def distToApple(self, p):
-        if self.apple == (-1, -1):
-            return 0
-        possiblePos = self.cycle.index(p)
-        appleCyclePos = [*self.cycle[possiblePos:], *self.cycle].index(self.apple)
-        return appleCyclePos - possiblePos
-        # return dist2(self.head, self.apple)
+        # if self.apple == (-1, -1):
+        #     return 0
+        # possiblePos = self.cycle.index(p)
+        # appleCyclePos = [*self.cycle[possiblePos:], *self.cycle].index(self.apple)
+        # return appleCyclePos - possiblePos
+        return hamDist(self.head, self.apple)
 
     def move(self):
         # newHead = min([p for p in nextPos(*self.head) if self.isViable(self.posInCycle(p))], key=self.distToApple)

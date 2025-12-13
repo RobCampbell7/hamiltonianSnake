@@ -4,8 +4,8 @@ from pygame.locals import *
 from hamilSnake import HamiltonianSnake
 from time import time
 
-squareSize = 20
-boardDim = (20, 20)
+squareSize = 40
+boardDim = (10, 10)
 moveTime = 0.05
 
 backgroundColour = (25, 25, 25)
