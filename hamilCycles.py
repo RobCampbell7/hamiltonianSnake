@@ -109,7 +109,7 @@ def printCycle(c, m, n):
             output += " -- "
         else:
             output += "    "
-    print(output + "\n")
+    print(output + "\n\n")
 
 def neighbours(i, m, n):
     if i // m > 0:
@@ -127,13 +127,13 @@ def splitCycle(c, m, n):
 
     for iN in possibleIndexes:
         i1 = iN
-        i2 = i1 + 1
+        i2 = (i1 + 1) % len(c)
         found = False
         for jn in range(m * n):
             if jn not in (i1, i2):
                 j1 = jn
                 if isCorner(j1, c, m, n) == False and indexesAreNeighbours(c[j1], c[i1], m, n):
-                    if isCorner(j1 + 1, c, m, n) == False and indexesAreNeighbours(c[j1 + 1], c[i2], m, n) and j1 + 1 not in (i1, i2):
+                    if isCorner((j1 + 1) % (m * n), c, m, n) == False and indexesAreNeighbours(c[(j1 + 1) % (m * n)], c[i2], m, n) and j1 + 1 not in (i1, i2):
                         j2 = j1 + 1
                         found = True
                         break
@@ -162,9 +162,25 @@ def neighboursPointInCycle(i, c, m, n):
             return True
     return False
 
+def shiftListR(lst, n):
+    if n <= 0:
+        return lst
+    else:
+        return shiftListR([lst[-1], *lst[:-1]], n - 1)
+def shiftList(lst, n):
+    if n <= 0:
+        return lst
+    else:
+        return shiftList([*lst[1:], lst[0]], n - 1)
+# def shiftListUntil(lst, condition):
+#     if condition(lst) == True:
+#         return lst
+#     else:
+#         return shiftList([lst[-1], *lst[:-1]], condition)
+
 def mergeCycles(c1, c2, m, n):
-    # c1 should be the larger cycle and c2 the smaller if this is not the case we correct it
-    if len(c1) > len(c2):
+    # c1 should be the list starting at zero
+    if c1[0] != 0:
         c1, c2 = c2, c1
 
     validNeighbouringIndexes = [
@@ -173,13 +189,13 @@ def mergeCycles(c1, c2, m, n):
     shuffle(validNeighbouringIndexes)
 
     for i1 in validNeighbouringIndexes:
-        i2 = i1 + 1
+        i2 = (i1 + 1) % len(c1)
         # i1 and i2 are members of c1
         # j1 and j2 are members of c2
         found = False
         for j in range(len(c2)):
             if indexesAreNeighbours(c1[i1], c2[j], m, n) == True:
-                if indexesAreNeighbours(c1[i2], c2[j + 1], m, n) == True:
+                if indexesAreNeighbours(c1[i2], c2[(j + 1)%len(c2)], m, n) == True:
                     j1, j2 = j, j + 1
                     found = True
                     break
@@ -191,20 +207,69 @@ def mergeCycles(c1, c2, m, n):
         if found == True:
             break
     
-    
+    if i2 == 0:
+        i2 == len(c1)
+    if j2 == 0:
+        j2 == len(c2)
+    # if j1 < j2:
+    #     print("j1 < j2")
+    # else:
+    #     print("j1 > j2")
+
+    # print(c1[0 : i1 + 1])
+    # # print((c2 * 2)[j2 : j1 + 1]) # INSTEAD OF THIS SHIFT C2 j2 or maybe j1 PLACES
+    # print(shiftList(c2, j1))
+    # print(c1[i2 :])
+    c = [
+        *c1[0 : i1 + 1],
+        *shiftList(c2, j1),
+        *c1[i2 :]
+    ]
+    assert len(c) == m * n
+    return c
         
+def isValidCycle(c, m, n):
+    if len(c) != m * n:
+        return False
+    for i in range(len(c)):
+        if indexesAreNeighbours(c[i - 1], c[i], m, n) == False:
+            return False
+    return True
 
 if __name__ == "__main__":
-    m, n = 6, 6
+    m, n = 10, 10
     c = hamilCycleIndexes(m, n)
+    assert isValidCycle(c, m, n)
     printCycle(c, m, n)
 
-    c1, c2 = splitCycle(c, m, n)
-    print(c1)
-    print(c2)
-    print("\n")
-    printCycle(c1, m, n)
-    print("\n")
-    printCycle(c2, m, n)
+    # c1, c2 = splitCycle(c, m, n)
+    # # print(c1)
+    # # print(c2)
+    # print("\n")
+    # printCycle(c1, m, n)
+    # print("\n")
+    # printCycle(c2, m, n)
 
-    mergeCycles(c1, c2, m, n)
+    # newC = mergeCycles(c1, c2, m, n)
+    # # print(newC)
+    # print()
+    # printCycle(newC, m, n)
+    
+    for i in range(50):
+        c1, c2 = splitCycle(c, m, n)
+        c = mergeCycles(c1, c2, m, n)
+        # input("len(c) = " + str(len(c)))
+        if isValidCycle(c, m, n) == False:
+            print("OH SHIT")
+            printCycle(c1, m, n)
+            printCycle(c2, m, n)
+            
+            printCycle(c, m, n)
+            if len(c) != m * n:
+                raise Exception("len(c) = " + str(len(c)))
+            else:
+                raise Exception("It fucked it")
+        else:
+            printCycle(c, m, n)
+    
+    printCycle(c, m, n)
