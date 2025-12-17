@@ -11,18 +11,10 @@ moveTime = 0.05
 backgroundColour = (25, 25, 25)
 appleColour = (200, 200, 200)
 snakeColour = (0, 150, 0)
-# class Square(pygame.sprite.Sprite):
-#     def __init__(self, colour=(25, 25, 25)):
-#         super(Square, self).__init__()
-#         self.surf = pygame.Surface((squareSize - 2, squareSize - 2))
-#         self.surf.fill(colour)
-#         self.rect = self.surf.get_rect()
 
 pygame.init()
 screen = pygame.display.set_mode((boardDim[0] * squareSize, boardDim[1] * squareSize))
 screen.fill((50, 50, 50))
-
-# squares = [[Square() for i in range(boardDim[0])] for j in range(boardDim[1])]
 
 snake = HamiltonianSnake(3, *boardDim)
 
@@ -58,7 +50,4 @@ while stop != True:
         pygame.draw.rect(screen, appleColour, pygame.Rect(snake.apple[0] * squareSize + 1,
                                                           snake.apple[1] * squareSize + 1,
                                                           squareSize - 2, squareSize - 2))
-        
-        # if snake.isAlive() == False:
-        #     stop = True
         pygame.display.flip()

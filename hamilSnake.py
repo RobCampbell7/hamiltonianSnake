@@ -45,14 +45,14 @@ class HamiltonianSnake:
     def posInCycle(self, p):
         return self.cycle.index(p)
 
-    def nextInCycle(self):
-        return self.cycle[(1 + self.cyclePos) % len(self.cycle)]
-    
-    def iterateCycle(self):
-        return (1 + self.cyclePos) % len(self.cycle)
+    def isViable(self, s):
+        """
+        Decides if s is a viable spot that will not cause the snake to crash
 
-    def isViable(self, s, a=None, t=None, h=None):
-        if s == self.iterateCycle():
+        s should be a position in the cycle not a position in the game board
+        """
+
+        if s == (1 + self.cyclePos) % len(self.cycle):
             return True
         elif self.apple == (-1, -1):
             return False
@@ -72,17 +72,9 @@ class HamiltonianSnake:
             return False
         else:
             return True
-
         
-        # # This is horrendous and messy and im hoping i can simplify it somehow
-        # # its been several weeks ive not even thought about this again. will try to fix soon
-        # if (s <= a and a > h and s > h) or (a < h and (s > h or s <= a)):
-        #     if (h > t and (s > h or s < t)) or (h < t and s > h and s < t):
-        #         return True
-        
-        return False
-
     def distToApple(self, p):
+        # THIS WILL BE REWORKED - TODO
         # if self.apple == (-1, -1):
         #     return 0
         # possiblePos = self.cycle.index(p)
@@ -91,8 +83,11 @@ class HamiltonianSnake:
         return hamDist(self.head, self.apple)
 
     def move(self):
-        # newHead = min([p for p in nextPos(*self.head) if self.isViable(self.posInCycle(p))], key=self.distToApple)
-        newHead = min([p for p in nextPos(*self.head) if inBounds(*p, 0, 0, self.m, self.n) and self.isViable(self.posInCycle(p))], key=self.distToApple)
+        newHead = min([
+            p for p in nextPos(*self.head) 
+            if inBounds(*p, 0, 0, self.m, self.n) and self.isViable(self.posInCycle(p))
+            ], key=self.distToApple
+        )
         self.trail = [self.head][:] + self.trail
         self.head = newHead
         self.cyclePos = self.posInCycle(self.head)

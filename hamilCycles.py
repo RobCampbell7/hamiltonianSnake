@@ -1,6 +1,5 @@
 from random import choice, randint, shuffle
 
-
 def indexToCoord(index, m, n):
     return (index % m, index // m)
 
@@ -122,7 +121,10 @@ def neighbours(i, m, n):
         yield i + m
 
 def splitCycle(c, m, n):
-    possibleIndexes = [i for i in range(m * n) if isCorner(i, c, m, n) == False and isCorner((i + 1) % (m * n), c, m, n) == False]
+    possibleIndexes = [
+        i for i in range(m * n)
+        if isCorner(i, c, m, n) == False and isCorner((i + 1) % (m * n), c, m, n) == False
+    ]
     shuffle(possibleIndexes)
 
     for iN in possibleIndexes:
@@ -172,11 +174,6 @@ def shiftList(lst, n):
         return lst
     else:
         return shiftList([*lst[1:], lst[0]], n - 1)
-# def shiftListUntil(lst, condition):
-#     if condition(lst) == True:
-#         return lst
-#     else:
-#         return shiftList([lst[-1], *lst[:-1]], condition)
 
 def mergeCycles(c1, c2, m, n):
     # c1 should be the list starting at zero
@@ -211,15 +208,7 @@ def mergeCycles(c1, c2, m, n):
         i2 == len(c1)
     if j2 == 0:
         j2 == len(c2)
-    # if j1 < j2:
-    #     print("j1 < j2")
-    # else:
-    #     print("j1 > j2")
 
-    # print(c1[0 : i1 + 1])
-    # # print((c2 * 2)[j2 : j1 + 1]) # INSTEAD OF THIS SHIFT C2 j2 or maybe j1 PLACES
-    # print(shiftList(c2, j1))
-    # print(c1[i2 :])
     c = [
         *c1[0 : i1 + 1],
         *shiftList(c2, j1),
@@ -243,7 +232,7 @@ def mutateCycle(c, m, n):
 
 def randHamilCycleIndexes(m, n):
     c = hamilCycleIndexes(m, n)
-    for i in range(m*n):
+    for i in range(m*n // 2):
         c = mutateCycle(c, m, n)
     return c
 
@@ -257,18 +246,6 @@ if __name__ == "__main__":
     assert isValidCycle(c, m, n)
     printCycle(c, m, n)
 
-    # c1, c2 = splitCycle(c, m, n)
-    # # print(c1)
-    # # print(c2)
-    # print("\n")
-    # printCycle(c1, m, n)
-    # print("\n")
-    # printCycle(c2, m, n)
-
-    # newC = mergeCycles(c1, c2, m, n)
-    # # print(newC)
-    # print()
-    # printCycle(newC, m, n)
     
     for i in range(10000):
         c = mutateCycle(c, m, n)
