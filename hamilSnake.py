@@ -75,19 +75,23 @@ class HamiltonianSnake:
         
     def distToApple(self, p):
         # THIS WILL BE REWORKED - TODO
-        # if self.apple == (-1, -1):
-        #     return 0
-        # possiblePos = self.cycle.index(p)
-        # appleCyclePos = [*self.cycle[possiblePos:], *self.cycle].index(self.apple)
-        # return appleCyclePos - possiblePos
-        return hamDist(self.head, self.apple)
+        if self.apple == (-1, -1):
+            return 0
+        possiblePos = self.cycle.index(p)
+        appleCyclePos = [*self.cycle[possiblePos:], *self.cycle].index(self.apple)
+        return appleCyclePos - possiblePos
+
+    def chooseBestMove(self):
+        possibleMoves = nextPos(*self.head)
+        viableMoves = []
+        for p in possibleMoves:
+            if inBounds(*p, 0, 0, self.m, self.n) and self.isViable(self.posInCycle(p)):
+                viableMoves.append(p)
+        
+        return min(viableMoves, key = self.distToApple)
 
     def move(self):
-        newHead = min([
-            p for p in nextPos(*self.head) 
-            if inBounds(*p, 0, 0, self.m, self.n) and self.isViable(self.posInCycle(p))
-            ], key=self.distToApple
-        )
+        newHead = self.chooseBestMove()
         self.trail = [self.head][:] + self.trail
         self.head = newHead
         self.cyclePos = self.posInCycle(self.head)
