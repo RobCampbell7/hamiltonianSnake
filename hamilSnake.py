@@ -74,7 +74,6 @@ class HamiltonianSnake:
             return True
         
     def distToApple(self, p):
-        # THIS WILL BE REWORKED - TODO
         if self.apple == (-1, -1):
             return 0
         possiblePos = self.cycle.index(p)
