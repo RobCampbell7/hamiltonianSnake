@@ -41,8 +41,6 @@ while stop != True:
             elif snakeBody[i][1] == snakeBody[i - 1][1]:
                 width = (squareSize) * 2 - 2
                 height = (squareSize) - 2
-            else:
-                print("OH SHIT")
 
             pygame.draw.rect(screen,
                             snakeColour,

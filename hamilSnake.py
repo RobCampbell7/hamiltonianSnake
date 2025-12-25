@@ -93,8 +93,6 @@ class HamiltonianSnake:
             self.findPathToApple()
             
         newHead = self.moveQueue.pop(0)
-        if newHead == self.head:
-            raise Exception("FUCKED")
         self.trail = [self.head][:] + self.trail
         self.head = newHead
         self.cyclePos = self.posInCycle(self.head)
@@ -102,9 +100,6 @@ class HamiltonianSnake:
             self.trail = self.trail[:-1]
         else:
             self.randomiseApple()
-        
-        if self.head in self.trail:
-            print("FUCKED")
 
     def position(self):
         return [self.head, *self.trail]
