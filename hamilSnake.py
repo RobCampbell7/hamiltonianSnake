@@ -1,5 +1,6 @@
 from random import choice
 from hamilCycles import randHamilCycleCoords as hamiltonianCycle
+from aStarForSnake import aStarSearch
 
 def up(x, y):
     return (x, y - 1)
@@ -31,6 +32,7 @@ class HamiltonianSnake:
         self.trail = []
         self.cycle = hamiltonianCycle(m, n)
         self.cyclePos = self.cycle.index(self.head)
+        self.moveQueue = []
         for i in range(1, length):
             self.trail.append(self.cycle[self.cyclePos - i])
         self.randomiseApple()
@@ -51,7 +53,6 @@ class HamiltonianSnake:
 
         s should be a position in the cycle not a position in the game board
         """
-
         if s == (1 + self.cyclePos) % len(self.cycle):
             return True
         elif self.apple == (-1, -1):
@@ -80,17 +81,20 @@ class HamiltonianSnake:
         appleCyclePos = [*self.cycle[possiblePos:], *self.cycle].index(self.apple)
         return appleCyclePos - possiblePos
 
-    def chooseBestMove(self):
-        possibleMoves = nextPos(*self.head)
-        viableMoves = []
-        for p in possibleMoves:
-            if inBounds(*p, 0, 0, self.m, self.n) and self.isViable(self.posInCycle(p)):
-                viableMoves.append(p)
-        
-        return min(viableMoves, key = self.distToApple)
+    def findPathToApple(self):
+        if self.apple != (-1, -1):
+            path = aStarSearch(self.position(), self.apple, self.cycle)
+        else:
+            path = self.cycle[self.cyclePos + 1 : ] + [(0, 0)]
+        self.moveQueue.extend(path)
 
     def move(self):
-        newHead = self.chooseBestMove()
+        if len(self.moveQueue) == 0:
+            self.findPathToApple()
+            
+        newHead = self.moveQueue.pop(0)
+        if newHead == self.head:
+            raise Exception("FUCKED")
         self.trail = [self.head][:] + self.trail
         self.head = newHead
         self.cyclePos = self.posInCycle(self.head)
@@ -98,6 +102,9 @@ class HamiltonianSnake:
             self.trail = self.trail[:-1]
         else:
             self.randomiseApple()
+        
+        if self.head in self.trail:
+            print("FUCKED")
 
     def position(self):
         return [self.head, *self.trail]

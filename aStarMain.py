@@ -69,7 +69,7 @@ def tracePath(nodes, src, dest):
         path = [(i, j)] + path
         i, j = nodes[j][i].parentI, nodes[j][i].parentJ
 
-    return [src] + path
+    return path
 
 def aStarSearch(src, dest, grid):
     if src == dest:
