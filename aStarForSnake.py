@@ -89,6 +89,43 @@ def aStarSearch(snakeBody, apple, cycle):
         initialMoves.append(cycle[headIndex])
         snakeBody = [cycle[headIndex]] + snakeBody[:-1]
 
+    visited = [[False for i in range(m)] for j in range(n)]
+    nodes = [[Node() for i in range(m)] for j in range(n)]
+    i, j = snakeBody[0]
+    nodes[j][i].f = 0
+    nodes[j][i].g = 0
+    nodes[j][i].h = 0
+
+    heap = [(0, snakeBody[:])]
+    found = False
+    while len(heap) > 0:
+        p = heap.pop(0)
+        body = p[1]
+        i, j = body[0]
+        visited[j][i] = True
+        nbours = neighbours((i, j))
+        for i2, j2 in nbours:
+            if isAllowed(i2, j2, body, apple, cycle, m, n) and visited[j2][i2] == False and (i2, j2) not in body:
+                if isAllowed(*apple, [(i2, j2)] + body[:-1], apple, cycle, m, n):
+                    nodes[j2][i2].parentI = i
+                    nodes[j2][i2].parentJ = j
+                    found = True
+                    snakeBody = [(i2, j2)] + body[:-1]
+                    initialMoves = tracePath(nodes, snakeBody[0], apple)
+                else:
+                    g2 = nodes[j][i].g + 1
+                    h2 = hamDist((i2, j2), apple)
+                    f2 = g2 + h2
+                    if nodes[j2][i2].f > f2:
+                        heap = insert((f2, [(i2, j2)] + body[:-1]), heap, key=lambda x : x[0])
+                        nodes[j2][i2].f = f2
+                        nodes[j2][i2].g = g2
+                        nodes[j2][i2].h = h2
+                        nodes[j2][i2].parentI = i
+                        nodes[j2][i2].parentJ = j
+    
+    visited = [[False for i in range(m)] for j in range(n)]
+    nodes = [[Node() for i in range(m)] for j in range(n)]
     i, j = snakeBody[0]
     nodes[j][i].f = 0
     nodes[j][i].g = 0
