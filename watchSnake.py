@@ -5,8 +5,8 @@ from hamilSnake import HamiltonianSnake
 from time import time
 
 squareSize = 30
-boardDim = (20, 20)
-moveTime = 0.1
+boardDim = (6, 6)
+moveTime = 0.05
 
 backgroundColour = (25, 25, 25)
 appleColour = (200, 200, 200)
