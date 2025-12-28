@@ -104,9 +104,7 @@ def aStarSearch(snakeBody, apple, cycle):
                         nodes[j2][i2].parentI = i
                         nodes[j2][i2].parentJ = j
                         found = True
-                        initialMoves = tracePath(nodes, snakeBody[0], (i2, j2))
-                        snakeBody = [(i2, j2)] + body[:-1]
-                        break
+                        return tracePath(nodes, snakeBody[0], (i2, j2))
                     else:
                         g2 = nodes[j][i].g + 1
                         h2 = hamDist((i2, j2), apple)
@@ -118,39 +116,52 @@ def aStarSearch(snakeBody, apple, cycle):
                             nodes[j2][i2].h = h2
                             nodes[j2][i2].parentI = i
                             nodes[j2][i2].parentJ = j
+        if found == False:
+            return [cycle[(cycle.index(snakeBody[0]) + 1) % len(cycle)]]
+    else:
+        visited = [[False for i in range(m)] for j in range(n)]
+        nodes = [[Node() for i in range(m)] for j in range(n)]
+        i, j = snakeBody[0]
+        nodes[j][i].f = 0
+        nodes[j][i].g = 0
+        nodes[j][i].h = 0
 
-    visited = [[False for i in range(m)] for j in range(n)]
-    nodes = [[Node() for i in range(m)] for j in range(n)]
-    i, j = snakeBody[0]
-    nodes[j][i].f = 0
-    nodes[j][i].g = 0
-    nodes[j][i].h = 0
-
-    heap = [(0, snakeBody[:])]
-    found = False
-    while len(heap) > 0:
-        p = heap.pop(0)
-        body = p[1]
-        i, j = body[0]
-        visited[j][i] = True
-        nbours = neighbours((i, j))
-        for i2, j2 in nbours:
-            if isAllowed(i2, j2, body, apple, cycle, m, n) and visited[j2][i2] == False and (i2, j2) not in body:
-                if (i2, j2) == apple:
-                    nodes[j2][i2].parentI = i
-                    nodes[j2][i2].parentJ = j
-                    found = True
-                    return initialMoves + tracePath(nodes, snakeBody[0], apple)
-                else:
-                    g2 = nodes[j][i].g + 1
-                    h2 = hamDist((i2, j2), apple)
-                    f2 = g2 + h2
-                    if nodes[j2][i2].f > f2:
-                        heap = insert((f2, [(i2, j2)] + body[:-1]), heap, key=lambda x : x[0])
-                        nodes[j2][i2].f = f2
-                        nodes[j2][i2].g = g2
-                        nodes[j2][i2].h = h2
+        heap = [(0, snakeBody[:])]
+        found = False
+        while len(heap) > 0:
+            p = heap.pop(0)
+            body = p[1]
+            i, j = body[0]
+            visited[j][i] = True
+            nbours = neighbours((i, j))
+            for i2, j2 in nbours:
+                if isAllowed(i2, j2, body, apple, cycle, m, n) and visited[j2][i2] == False and (i2, j2) not in body:
+                    if (i2, j2) == apple:
                         nodes[j2][i2].parentI = i
                         nodes[j2][i2].parentJ = j
-    if found == False:
-        return []
+                        found = True
+                        return initialMoves + tracePath(nodes, snakeBody[0], apple)
+                    else:
+                        g2 = nodes[j][i].g + 1
+                        h2 = hamDist((i2, j2), apple)
+                        f2 = g2 + h2
+                        if nodes[j2][i2].f > f2:
+                            heap = insert((f2, [(i2, j2)] + body[:-1]), heap, key=lambda x : x[0])
+                            nodes[j2][i2].f = f2
+                            nodes[j2][i2].g = g2
+                            nodes[j2][i2].h = h2
+                            nodes[j2][i2].parentI = i
+                            nodes[j2][i2].parentJ = j
+        if found == False:
+            return []
+
+if __name__=="__main__":
+    # Testing problematic values
+    m, n = 6, 6
+    cycle = [(0, 0), (1, 0), (1, 1), (2, 1), (2, 0), (3, 0), (3, 1), (4, 1), (4, 0), (5, 0), (5, 1), (5, 2), (5, 3), (4, 3), (4, 2), (3, 2), (2, 2), (1, 2), (1, 3), (2, 3), (3, 3), (3, 4), (4, 4), (5, 4), (5, 5), (4, 5), (3, 5), (2, 5), (2, 4), (1, 4), (1, 5), (0, 5), (0, 4), (0, 3), (0, 2), (0, 1)]
+    position = [(4, 2), (4, 3), (3, 3), (2, 3)]
+    apple = (0, 4)
+
+    path = aStarSearch(position, apple, cycle)
+    if len(path) == 0:
+        raise Exception
