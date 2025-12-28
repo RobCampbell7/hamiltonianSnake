@@ -15,6 +15,11 @@ class Node:
 def hamDist(pos, dest):
     return abs(pos[0] - dest[0]) + abs(pos[1] - dest[1])
 
+def cycleDist(pos, dest, cycle):
+    pI = cycle.index(pos)
+    dI = pI + (cycle[pI:] + cycle[:pI]).index(dest)
+    return dI - pI
+
 def insert(item, lst, key=lambda x : x, asc=True):
     for i in range(len(lst)):
         if key(lst[i]) > key(item) and asc == True or key(lst[i]) < key(item) and asc == False:
@@ -107,7 +112,7 @@ def aStarSearch(snakeBody, apple, cycle):
                         return tracePath(nodes, snakeBody[0], (i2, j2))
                     else:
                         g2 = nodes[j][i].g + 1
-                        h2 = hamDist((i2, j2), apple)
+                        h2 = cycleDist((i2, j2), apple, cycle)
                         f2 = g2 + h2
                         if nodes[j2][i2].f > f2:
                             heap = insert((f2, [(i2, j2)] + body[:-1]), heap, key=lambda x : x[0])
@@ -143,7 +148,7 @@ def aStarSearch(snakeBody, apple, cycle):
                         return initialMoves + tracePath(nodes, snakeBody[0], apple)
                     else:
                         g2 = nodes[j][i].g + 1
-                        h2 = hamDist((i2, j2), apple)
+                        h2 = cycleDist((i2, j2), apple, cycle)
                         f2 = g2 + h2
                         if nodes[j2][i2].f > f2:
                             heap = insert((f2, [(i2, j2)] + body[:-1]), heap, key=lambda x : x[0])
