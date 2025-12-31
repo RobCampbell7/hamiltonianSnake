@@ -4,15 +4,21 @@ from hamilCycles import randHamilCycleCoords
 
 class Node:
     def __init__(self):
+        self.isOrigin = False
         # self.body = []
         self.f = inf
         self.g = inf
         self.h = inf
-        self.parentI = None
-        self.parentJ = None
+        self.parentI = 0
+        self.parentJ = 0
 
 def hamDist(pos, dest):
     return abs(pos[0] - dest[0]) + abs(pos[1] - dest[1])
+
+def cycleDist(pos, dest, cycle):
+    pI = cycle.index(pos)
+    dI = pI + (cycle[pI:] + cycle[:pI]).index(dest)
+    return dI - pI
 
 def insert(item, lst, key=lambda x : x, asc=True):
     for i in range(len(lst)):
@@ -56,11 +62,11 @@ def isAllowed(i, j, body, apple, cycle, m, n):
 def tracePath(nodes, src, dest):
     path = []
     i, j = dest
-    while i != None and j != None:
+    while (i, j) != src:
         path = [(i, j)] + path
         i, j = nodes[j][i].parentI, nodes[j][i].parentJ
 
-    return path[1:]
+    return path
 
 def printSnake(body, apple, m, n):
     output = " "
@@ -76,49 +82,93 @@ def printSnake(body, apple, m, n):
     print(output)
 
 def aStarSearch(snakeBody, apple, cycle):
+    # heuristic = lambda src, dest: cycleDist(src, dest, cycle)
+    heuristic = lambda src, dest: hamDist(src, dest)
     m = max([p[0] for p in cycle]) + 1
     n = max([p[1] for p in cycle]) + 1
 
-    visited = [[False for i in range(m)] for j in range(n)]
-    nodes = [[Node() for i in range(m)] for j in range(n)]
-
     initialMoves = []
-    headIndex = cycle.index(snakeBody[0])
-    while isAllowed(*apple, snakeBody, apple, cycle, m, n) == False:
-        headIndex = (headIndex + 1) % len(cycle)
-        initialMoves.append(cycle[headIndex])
-        snakeBody = [cycle[headIndex]] + snakeBody[:-1]
+    if isAllowed(*apple, snakeBody, apple, cycle, m, n) == False:
+        visited = [[False for i in range(m)] for j in range(n)]
+        nodes = [[Node() for i in range(m)] for j in range(n)]
+        i, j = snakeBody[0]
+        nodes[j][i].f = 0
+        nodes[j][i].g = 0
+        nodes[j][i].h = 0
+        nodes[j][i].isOrigin = True
 
-    i, j = snakeBody[0]
-    nodes[j][i].f = 0
-    nodes[j][i].g = 0
-    nodes[j][i].h = 0
-
-    heap = [(0, snakeBody[:])]
-    found = False
-    while len(heap) > 0:
-        p = heap.pop(0)
-        body = p[1]
-        i, j = body[0]
-        visited[j][i] = True
-        nbours = neighbours((i, j))
-        for i2, j2 in nbours:
-            if isAllowed(i2, j2, body, apple, cycle, m, n) and visited[j2][i2] == False and (i2, j2) not in body:
-                if (i2, j2) == apple:
-                    nodes[j2][i2].parentI = i
-                    nodes[j2][i2].parentJ = j
-                    found = True
-                    return initialMoves + tracePath(nodes, snakeBody[0], apple)
-                else:
-                    g2 = nodes[j][i].g + 1
-                    h2 = hamDist((i2, j2), apple)
-                    f2 = g2 + h2
-                    if nodes[j2][i2].f > f2:
-                        heap = insert((f2, [(i2, j2)] + body[:-1]), heap, key=lambda x : x[0])
-                        nodes[j2][i2].f = f2
-                        nodes[j2][i2].g = g2
-                        nodes[j2][i2].h = h2
+        heap = [(0, snakeBody[:])]
+        found = False
+        while len(heap) > 0 and found == False:
+            p = heap.pop(0)
+            body = p[1]
+            i, j = body[0]
+            visited[j][i] = True
+            nbours = neighbours((i, j))
+            for i2, j2 in nbours:
+                if isAllowed(i2, j2, body, apple, cycle, m, n) and visited[j2][i2] == False and (i2, j2) not in body:
+                    if isAllowed(*apple, [(i2, j2)] + body[:-1], apple, cycle, m, n):
                         nodes[j2][i2].parentI = i
                         nodes[j2][i2].parentJ = j
-    if found == False:
-        return []
+                        found = True
+                        return tracePath(nodes, snakeBody[0], (i2, j2))
+                    else:
+                        g2 = nodes[j][i].g + 1
+                        h2 = heuristic((i2, j2), apple)
+                        f2 = g2 + h2
+                        if nodes[j2][i2].f > f2:
+                            heap = insert((f2, [(i2, j2)] + body[:-1]), heap, key=lambda x : x[0])
+                            nodes[j2][i2].f = f2
+                            nodes[j2][i2].g = g2
+                            nodes[j2][i2].h = h2
+                            nodes[j2][i2].parentI = i
+                            nodes[j2][i2].parentJ = j
+        if found == False:
+            return [cycle[(cycle.index(snakeBody[0]) + 1) % len(cycle)]]
+    else:
+        visited = [[False for i in range(m)] for j in range(n)]
+        nodes = [[Node() for i in range(m)] for j in range(n)]
+        i, j = snakeBody[0]
+        nodes[j][i].f = 0
+        nodes[j][i].g = 0
+        nodes[j][i].h = 0
+
+        heap = [(0, snakeBody[:])]
+        found = False
+        while len(heap) > 0:
+            p = heap.pop(0)
+            body = p[1]
+            i, j = body[0]
+            visited[j][i] = True
+            nbours = neighbours((i, j))
+            for i2, j2 in nbours:
+                if isAllowed(i2, j2, body, apple, cycle, m, n) and visited[j2][i2] == False and (i2, j2) not in body:
+                    if (i2, j2) == apple:
+                        nodes[j2][i2].parentI = i
+                        nodes[j2][i2].parentJ = j
+                        found = True
+                        return initialMoves + tracePath(nodes, snakeBody[0], apple)
+                    else:
+                        g2 = nodes[j][i].g + 1
+                        h2 = heuristic((i2, j2), apple)
+                        f2 = g2 + h2
+                        if nodes[j2][i2].f > f2:
+                            heap = insert((f2, [(i2, j2)] + body[:-1]), heap, key=lambda x : x[0])
+                            nodes[j2][i2].f = f2
+                            nodes[j2][i2].g = g2
+                            nodes[j2][i2].h = h2
+                            nodes[j2][i2].parentI = i
+                            nodes[j2][i2].parentJ = j
+        if found == False:
+            return []
+
+if __name__=="__main__":
+    # Testing problematic values
+    m, n = 6, 6
+    cycle = [(0, 0), (1, 0), (1, 1), (2, 1), (2, 0), (3, 0), (3, 1), (4, 1), (4, 0), (5, 0), (5, 1), (5, 2), (5, 3), (4, 3), (4, 2), (3, 2), (2, 2), (1, 2), (1, 3), (2, 3), (3, 3), (3, 4), (4, 4), (5, 4), (5, 5), (4, 5), (3, 5), (2, 5), (2, 4), (1, 4), (1, 5), (0, 5), (0, 4), (0, 3), (0, 2), (0, 1)]
+    position = [(4, 2), (4, 3), (3, 3), (2, 3)]
+    apple = (0, 4)
+
+    path = aStarSearch(position, apple, cycle)
+    if len(path) == 0:
+        raise Exception

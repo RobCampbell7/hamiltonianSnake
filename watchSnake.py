@@ -4,19 +4,19 @@ from pygame.locals import *
 from hamilSnake import HamiltonianSnake
 from time import time
 
-squareSize = 30
-boardDim = (20, 20)
+squareSize = 20
+boardDim = (10, 10)
 moveTime = 0.0
 
 backgroundColour = (25, 25, 25)
 appleColour = (200, 200, 200)
 snakeColour = (0, 150, 0)
 
+snake = HamiltonianSnake(3, *boardDim)
+
 pygame.init()
 screen = pygame.display.set_mode((boardDim[0] * squareSize, boardDim[1] * squareSize))
 screen.fill((50, 50, 50))
-
-snake = HamiltonianSnake(3, *boardDim)
 
 lastMoveTime = time() - moveTime
 stop = False
