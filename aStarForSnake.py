@@ -82,6 +82,8 @@ def printSnake(body, apple, m, n):
     print(output)
 
 def aStarSearch(snakeBody, apple, cycle):
+    # heuristic = lambda src, dest: cycleDist(src, dest, cycle)
+    heuristic = lambda src, dest: hamDist(src, dest)
     m = max([p[0] for p in cycle]) + 1
     n = max([p[1] for p in cycle]) + 1
 
@@ -112,7 +114,7 @@ def aStarSearch(snakeBody, apple, cycle):
                         return tracePath(nodes, snakeBody[0], (i2, j2))
                     else:
                         g2 = nodes[j][i].g + 1
-                        h2 = cycleDist((i2, j2), apple, cycle)
+                        h2 = heuristic((i2, j2), apple)
                         f2 = g2 + h2
                         if nodes[j2][i2].f > f2:
                             heap = insert((f2, [(i2, j2)] + body[:-1]), heap, key=lambda x : x[0])
@@ -148,7 +150,7 @@ def aStarSearch(snakeBody, apple, cycle):
                         return initialMoves + tracePath(nodes, snakeBody[0], apple)
                     else:
                         g2 = nodes[j][i].g + 1
-                        h2 = cycleDist((i2, j2), apple, cycle)
+                        h2 = heuristic((i2, j2), apple)
                         f2 = g2 + h2
                         if nodes[j2][i2].f > f2:
                             heap = insert((f2, [(i2, j2)] + body[:-1]), heap, key=lambda x : x[0])
