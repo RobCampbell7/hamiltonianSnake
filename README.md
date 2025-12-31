@@ -21,28 +21,27 @@ As an extra that I implemented for some reason you can actual play snake yoursel
 There are a number of visual changes that can be made such as board size and the size of each space which I hope is fairly self explanatory.
 
 ## Directory Contents
-### README.md
+### `README.md`
 The file you're looking at...
 
-### watchSnake.py
+### `watchSnake.py`
 The main file in this project that implements the described method and visualises it using pygame
 
-### hamilSnake.py
+### `hamilSnake.py`
 Implements the class for the snake with hamiltonian behaviour. This has several useless methods and things I plan to change. But it works at present and effectively implements the snake.
 
-### aStarForSnake.py
+### `aStarForSnake.py`
 This contains the functionality for the pathfinding method of the algorithm using A* and the hamiltonian logic.
 
-### hamilCycles.py
+### `hamilCycles.py`
 This file contains the functionality for generating hamiltonian cycles, both random and regularly structured. Implements two methods for returning indexes in a grid or coordinates.
 
-### snakePlayer.py and playSnake.py
+### `snakePlayer.py` and `playSnake.py`
 These files contain the class for running regular snake played by the user and actual file to run and visualise this in pygame.
 
-### aStarTesting/
+### `aStarTesting/`
 Files from when I was testing the A* algorithm first to then modify it for our purposes. It is kept for posteristy and in case I accidentally break my implementation and need to refer back.
 
 ## TODO
 - Change implementation of cycle to instead be a map rather than list to increase lookup speed.
-- Potential change in distance heuristic used in A*, something like distance along cycle?
-- Alternate method for finding the 'initial moves' in path finding algorithm that make the apple an allowed space. Maybe a double A* implementation who knows?
+- Redo A* method will alternate method of indexing nodes. !important!
