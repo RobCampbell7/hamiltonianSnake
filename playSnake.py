@@ -6,6 +6,7 @@ from time import time
 squareSize = 20
 boardDim = (20, 20)
 moveTime = 1/6
+gapSize = 0.05 * squareSize
 
 backgroundColour = (25, 25, 25)
 appleColour = (200, 200, 200)
@@ -51,25 +52,21 @@ while stop != True:
         snakeBody = snake.position()
         screen.fill(backgroundColour)
         for i in range(1, len(snakeBody)):
-            # left, top = (0, 0), (0, 0)
-            # width, height = 0, 0
-            left = min(snakeBody[i], snakeBody[i - 1], key = lambda p : p[0])[0] * (squareSize) + 1
-            top = min(snakeBody[i], snakeBody[i - 1], key = lambda p : p[1])[1] * (squareSize) + 1
+            left = min(snakeBody[i], snakeBody[i - 1], key = lambda p : p[0])[0] * (squareSize) + 2 * gapSize
+            top = min(snakeBody[i], snakeBody[i - 1], key = lambda p : p[1])[1] * (squareSize) + 2 * gapSize
             if snakeBody[i][0] == snakeBody[i - 1][0]:
-                width = (squareSize) - 2
-                height = (squareSize) * 2 - 2
+                width = (squareSize) - 2 * gapSize
+                height = (squareSize) * 2 - 2 * gapSize
             elif snakeBody[i][1] == snakeBody[i - 1][1]:
-                width = (squareSize) * 2 - 2
-                height = (squareSize) - 2
-            else:
-                print("OH SHIT")
+                width = (squareSize) * 2 - 2 * gapSize
+                height = (squareSize) - 2 * gapSize
 
             pygame.draw.rect(screen,
                             snakeColour,
                             pygame.Rect(left, top, width, height))
-        pygame.draw.rect(screen, appleColour, pygame.Rect(snake.apple[0] * squareSize + 1,
-                                                          snake.apple[1] * squareSize + 1,
-                                                          squareSize - 2, squareSize - 2))
+        pygame.draw.rect(screen, appleColour, pygame.Rect(snake.apple[0] * squareSize + 2 * gapSize,
+                                                          snake.apple[1] * squareSize + 2 * gapSize,
+                                                          squareSize - 2 * gapSize, squareSize - 2 * gapSize))
         
         if snake.isAlive() == False:
             stop = True
