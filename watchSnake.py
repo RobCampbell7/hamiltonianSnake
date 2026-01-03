@@ -4,9 +4,9 @@ from pygame.locals import *
 from hamilSnake import HamiltonianSnake
 from time import time
 
-squareSize = 20
-boardDim = (10, 10)
-moveTime = 0.05
+squareSize = 50
+boardDim = (6, 6)
+moveTime = 0.2
 
 backgroundColour = (25, 25, 25)
 appleColour = (200, 200, 200)
@@ -15,7 +15,7 @@ snakeColour = (0, 150, 0)
 snake = HamiltonianSnake(3, *boardDim)
 
 pygame.init()
-screen = pygame.display.set_mode((boardDim[0] * squareSize, boardDim[1] * squareSize))
+screen = pygame.display.set_mode((boardDim[0] * squareSize + 2, boardDim[1] * squareSize + 2))
 screen.fill((50, 50, 50))
 
 lastMoveTime = time() - moveTime
@@ -33,8 +33,8 @@ while stop != True:
         apple = snake.apple
         screen.fill(backgroundColour)
         for i in range(1, len(snakeBody)):
-            left = min(snakeBody[i], snakeBody[i - 1], key = lambda p : p[0])[0] * (squareSize) + 1
-            top = min(snakeBody[i], snakeBody[i - 1], key = lambda p : p[1])[1] * (squareSize) + 1
+            left = min(snakeBody[i], snakeBody[i - 1], key = lambda p : p[0])[0] * (squareSize) + 2
+            top = min(snakeBody[i], snakeBody[i - 1], key = lambda p : p[1])[1] * (squareSize) + 2
             if snakeBody[i][0] == snakeBody[i - 1][0]:
                 width = (squareSize) - 2
                 height = (squareSize) * 2 - 2
@@ -45,7 +45,7 @@ while stop != True:
             pygame.draw.rect(screen,
                             snakeColour,
                             pygame.Rect(left, top, width, height))
-        pygame.draw.rect(screen, appleColour, pygame.Rect(snake.apple[0] * squareSize + 1,
-                                                          snake.apple[1] * squareSize + 1,
+        pygame.draw.rect(screen, appleColour, pygame.Rect(snake.apple[0] * squareSize + 2,
+                                                          snake.apple[1] * squareSize + 2,
                                                           squareSize - 2, squareSize - 2))
         pygame.display.flip()
