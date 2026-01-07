@@ -1,6 +1,7 @@
 from random import choice
 from hamilCycles import randHamilCycleCoords as hamiltonianCycle
 from aStarForSnake import aStarSearch
+from breadthFirstForSnake import pathfind
 
 def up(x, y):
     return (x, y - 1)
@@ -83,7 +84,11 @@ class HamiltonianSnake:
 
     def findPathToApple(self):
         if self.apple != (-1, -1):
-            path = aStarSearch(self.position(), self.apple, self.cycle)
+            path = pathfind(self.position(), self.apple, self.cycle, self.m, self.n)
+            print("position:", self.position())
+            print("path:", path)
+            # path = aStarSearch(self.position(), self.apple, self.cycle)
+            print(path)
         else:
             path = self.cycle[self.cyclePos + 1 : ] + [(0, 0)]
         self.moveQueue.extend(path)

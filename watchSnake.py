@@ -4,8 +4,8 @@ from pygame.locals import *
 from hamilSnake import HamiltonianSnake
 from time import time
 
-squareSize = 40
-boardDim = (12, 12)
+squareSize = 30
+boardDim = (9, 10)
 moveTime = 0.05
 gapSize = 0.05 * squareSize
 
@@ -42,6 +42,8 @@ while stop != True:
             elif snakeBody[i][1] == snakeBody[i - 1][1]:
                 width = (squareSize) * 2 - 2 * gapSize
                 height = (squareSize) - 2 * gapSize
+            else:
+                print("self intersection")
 
             pygame.draw.rect(screen,
                             snakeColour,
