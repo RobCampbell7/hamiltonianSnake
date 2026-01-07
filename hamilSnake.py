@@ -26,16 +26,24 @@ def inBounds(x, y, xMin, yMin, xMax, yMax):
     else:
         return False
 
+def buildCycleMap(cycle, m, n):
+    # To replace the frequent use of index with a faster implementation
+    cycleIndex = {}
+    for i in range(m * n):
+        cycleIndex[cycle[i]] = i
+    
+    return cycleIndex
+
 class HamiltonianSnake:
     def __init__(self, length, m, n):
         self.m, self.n = m, n
         self.head = (m//2, n//2)
-        self.trail = []
+        self.trail = [left(*self.head), left(*left(*self.head))]
         self.cycle = hamiltonianCycle(m, n)
-        self.cyclePos = self.cycle.index(self.head)
+        self.cycleIndex = buildCycleMap(self.cycle, m, n)
         self.moveQueue = []
-        for i in range(1, length):
-            self.trail.append(self.cycle[self.cyclePos - i])
+        # for i in range(1, length):
+        #     self.trail.append(self.cycle[self.cyclePos - i])
         self.randomiseApple()
 
     def randomiseApple(self):
@@ -44,45 +52,8 @@ class HamiltonianSnake:
             self.apple= (-1, -1)
         else:
             self.apple = choice(possible)
-    
-    def posInCycle(self, p):
-        return self.cycle.index(p)
 
-    def isViable(self, s):
-        """
-        Decides if s is a viable spot that will not cause the snake to crash
-
-        s should be a position in the cycle not a position in the game board
-        """
-        if s == (1 + self.cyclePos) % len(self.cycle):
-            return True
-        elif self.apple == (-1, -1):
-            return False
-        
-        if a == None:
-            a = self.posInCycle(self.apple)
-        if t == None:
-            t = self.posInCycle(self.trail[-1])
-        if h == None:
-            h = self.cyclePos
-        
-        a = (a - t) % (self.m * self.n)
-        h = (h - t) % (self.m * self.n)
-        s = (s - t) % (self.m * self.n)
-        t = 0
-        if s < h or s > a:
-            return False
-        else:
-            return True
-        
-    def distToApple(self, p):
-        if self.apple == (-1, -1):
-            return 0
-        possiblePos = self.cycle.index(p)
-        appleCyclePos = [*self.cycle[possiblePos:], *self.cycle].index(self.apple)
-        return appleCyclePos - possiblePos
-
-    def findPathToApple(self):
+    def findPath(self):
         if self.apple != (-1, -1):
             path = pathfind(self.position(), self.apple, self.cycle, self.m, self.n)
             print("position:", self.position())
@@ -95,12 +66,11 @@ class HamiltonianSnake:
 
     def move(self):
         if len(self.moveQueue) == 0:
-            self.findPathToApple()
+            self.findPath()
             
         newHead = self.moveQueue.pop(0)
         self.trail = [self.head][:] + self.trail
         self.head = newHead
-        self.cyclePos = self.posInCycle(self.head)
         if self.head != self.apple:
             self.trail = self.trail[:-1]
         else:
