@@ -38,7 +38,9 @@ class HamiltonianSnake:
     def __init__(self, length, m, n):
         self.m, self.n = m, n
         self.head = (m//2, n//2)
-        self.trail = [left(*self.head), left(*left(*self.head))]
+        self.trail = [left(*self.head)]
+        for i in range(length):
+            self.trail.append(left(*self.trail[-1]))
         self.cycle = hamiltonianCycle(m, n)
         self.cycleIndex = buildCycleMap(self.cycle, m, n)
         self.moveQueue = []
