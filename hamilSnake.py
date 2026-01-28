@@ -57,11 +57,13 @@ class HamiltonianSnake:
 
     def findPath(self):
         if self.apple != (-1, -1):
-            path = pathfind(self.position(), self.apple, self.cycle, self.m, self.n)
-            print("position:", self.position())
-            print("path:", path)
-            # path = aStarSearch(self.position(), self.apple, self.cycle)
-            print(path)
+            path = pathfind(self.position(), self.apple, self.cycleIndex, self.m, self.n)
+            if path == []:
+                path = [self.cycle[(self.cycleIndex[self.head] + 1) % (self.m * self.n)]]
+            # print("position:", self.position())
+            # print("path:", path)
+            # # path = aStarSearch(self.position(), self.apple, self.cycle)
+            # print(path)
         else:
             path = self.cycle[self.cyclePos + 1 : ] + [(0, 0)]
         self.moveQueue.extend(path)

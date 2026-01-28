@@ -35,10 +35,10 @@ def nextSnakes(snakeBody, m, n):
         snakes.append(((i, j - 1), (i, j), *snakeBody[1:-1]))
     return snakes
 
-def isAllowed(body, cycle, m, n):
-    s = cycle.index(body[0])
-    h = cycle.index(body[1])
-    t = cycle.index(body[-1])
+def isAllowed(body, cycleMap, m, n):
+    s = cycleMap[body[0]]
+    h = cycleMap[body[1]]
+    t = cycleMap[body[-1]]
 
     h = (h - t) % (m * n)
     s = (s - t) % (m * n)
@@ -61,7 +61,7 @@ def printSnake(body, apple, m, n):
         output += "\n "
     print(output)
 
-def pathfind(snakeBody, apple, cycle, m, n):
+def pathfind(snakeBody, apple, cycleMap, m, n):
     if type(snakeBody) != tuple:
         snakeBody = tuple(snakeBody)
     visited = set()
@@ -74,7 +74,7 @@ def pathfind(snakeBody, apple, cycle, m, n):
         current = frontier.pop(0)
         visited.add(current)
         for newSnake in nextSnakes(current, m, n):
-            if newSnake not in visited and isAllowed(newSnake, cycle, m, n):
+            if newSnake not in visited and isAllowed(newSnake, cycleMap, m, n):
                 nodes[newSnake] = Node(newSnake)
                 nodes[newSnake].setParent(nodes[current])
                 if newSnake[0] == apple:
@@ -84,7 +84,7 @@ def pathfind(snakeBody, apple, cycle, m, n):
                     frontier.append(newSnake)
     
     if found == False:
-        return [cycle[(cycle.index(snakeBody[0]) + 1) % len(cycle)]]
+        return []
 
 if __name__=="__main__":
     m, n = 6, 6
