@@ -3,6 +3,7 @@ from pygame.locals import *
 from snakePlayer import Snake, direction
 from time import time
 
+# pixels per cell, board size in cells, seconds between moves, and the margin inside each cell
 squareSize = 20
 boardDim = (20, 20)
 moveTime = 1/6
@@ -51,6 +52,7 @@ while stop != True:
 
         snakeBody = snake.position()
         screen.fill(backgroundColour)
+        # each segment is one rectangle spanning this cell and the previous one so the body looks continuous
         for i in range(1, len(snakeBody)):
             left = min(snakeBody[i], snakeBody[i - 1], key = lambda p : p[0])[0] * (squareSize) + 2 * gapSize
             top = min(snakeBody[i], snakeBody[i - 1], key = lambda p : p[1])[1] * (squareSize) + 2 * gapSize

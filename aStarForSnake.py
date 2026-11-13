@@ -1,3 +1,4 @@
+# a* version of the pathfinding. hamilSnake imports it but currently uses breadthFirstForSnake instead
 from math import inf
 from random import choice, randint
 from hamilCycles import randHamilCycleCoords
@@ -16,6 +17,7 @@ def hamDist(pos, dest):
     return abs(pos[0] - dest[0]) + abs(pos[1] - dest[1])
 
 def cycleDist(pos, dest, cycle):
+    # number of steps forward along the cycle to get from pos to dest
     pI = cycle.index(pos)
     dI = pI + (cycle[pI:] + cycle[:pI]).index(dest)
     return dI - pI
@@ -50,6 +52,8 @@ def isAllowed(i, j, body, apple, cycle, m, n):
     a = cycle.index(apple)
     t = cycle.index(body[-1])
 
+    # shift so the tail sits at zero, then the new cell has to lie between the head and the apple
+    # in cycle order. going no further than the apple stops shortcuts that would skip past it
     a = (a - t) % (m * n)
     h = (h - t) % (m * n)
     s = (s - t) % (m * n)
@@ -60,6 +64,7 @@ def isAllowed(i, j, body, apple, cycle, m, n):
         return True
     
 def tracePath(nodes, src, dest):
+    # follow the parent pointers back from the apple to the head
     path = []
     i, j = dest
     while (i, j) != src:
@@ -84,9 +89,12 @@ def printSnake(body, apple, m, n):
 def aStarSearch(snakeBody, apple, cycle):
     # heuristic = lambda src, dest: cycleDist(src, dest, cycle)
     heuristic = lambda src, dest: hamDist(src, dest)
+    # board size read off the cycle, which covers every cell
     m = max([p[0] for p in cycle]) + 1
     n = max([p[1] for p in cycle]) + 1
 
+    # one node per cell, indexed [j][i], so a cell is only ever reached by its cheapest route.
+    # the body is carried along in each heap entry so moves can be checked against it
     visited = [[False for i in range(m)] for j in range(n)]
     nodes = [[Node() for i in range(m)] for j in range(n)]
     i, j = snakeBody[0]
@@ -94,6 +102,7 @@ def aStarSearch(snakeBody, apple, cycle):
     nodes[j][i].g = 0
     nodes[j][i].h = 0
 
+    # sorted list standing in for a priority queue, lowest f at the front
     heap = [(0, snakeBody[:])]
     found = False
     while len(heap) > 0:
@@ -121,6 +130,7 @@ def aStarSearch(snakeBody, apple, cycle):
                         nodes[j2][i2].parentI = i
                         nodes[j2][i2].parentJ = j
     if found == False:
+        # no route to the apple, so just take the next step round the cycle
         return [cycle[(cycle.index(snakeBody[0]) + 1) % len(cycle)]]
 
 if __name__=="__main__":

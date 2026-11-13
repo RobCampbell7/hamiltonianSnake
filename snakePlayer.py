@@ -38,7 +38,9 @@ class Snake:
         self.yLim = limits[1] - 1
         self.direction = direction.right
         self.trail = []
+        # when set, the first call to move() does nothing
         self.first = ignoreFirst
+        # body trails off behind the head, opposite to the starting direction
         for i in range(length - 1):
             if i == 0:
                 self.trail.append(move(start, opposite(self.direction)))
@@ -47,6 +49,7 @@ class Snake:
     
     def move(self):
         if self.first == False:
+            # step the head on and drop the tail, unless the apple was eaten in which case the snake grows
             self.trail = [self.head] + self.trail
             self.head = move(self.head, self.direction)
             if self.head != self.apple:
@@ -60,6 +63,7 @@ class Snake:
         return [self.head, *self.trail]
 
     def isAlive(self):
+        # dead if the head is off the board or on the body
         if self.head[0] < 0 or self.head[0] > self.xLim:
             return False
         elif self.head[1] < 0 or self.head[1] > self.yLim:
@@ -70,6 +74,7 @@ class Snake:
             return True
     
     def randomApple(self):
+        # any free cell, or (-1, -1) once the board is full
         snakePos = self.position()
         possible = []
         for x in range(1 + self.xLim):

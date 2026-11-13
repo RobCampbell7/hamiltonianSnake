@@ -4,6 +4,7 @@ from pygame.locals import *
 from hamilSnake import HamiltonianSnake
 from time import time
 
+# pixels per cell, board size in cells, seconds between moves, and the margin left around the snake inside each cell
 squareSize = 30
 boardDim = (9, 10)
 moveTime = 0.05
@@ -33,6 +34,8 @@ while stop != True:
         snakeBody = snake.position()
         apple = snake.apple
         screen.fill(backgroundColour)
+        # each segment is drawn as one rectangle covering this cell and the one before it,
+        # so the snake looks joined up rather than a row of separate squares
         for i in range(1, len(snakeBody)):
             left = min(snakeBody[i], snakeBody[i - 1], key = lambda p : p[0])[0] * (squareSize) + 2 * gapSize
             top = min(snakeBody[i], snakeBody[i - 1], key = lambda p : p[1])[1] * (squareSize) + 2 * gapSize

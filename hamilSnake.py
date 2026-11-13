@@ -38,11 +38,14 @@ class HamiltonianSnake:
     def __init__(self, length, m, n):
         self.m, self.n = m, n
         self.head = (m//2, n//2)
+        # body starts as a straight line to the left of the head, laid out without reference to the cycle
         self.trail = [left(*self.head)]
         for i in range(length):
             self.trail.append(left(*self.trail[-1]))
+        # a random hamiltonian cycle of the board, plus a dict from cell to its position in the cycle so lookups are not a list search
         self.cycle = hamiltonianCycle(m, n)
         self.cycleIndex = buildCycleMap(self.cycle, m, n)
+        # cells the head will visit next, refilled by findPath when it runs out
         self.moveQueue = []
         # for i in range(1, length):
         #     self.trail.append(self.cycle[self.cyclePos - i])
@@ -57,14 +60,17 @@ class HamiltonianSnake:
 
     def findPath(self):
         if self.apple != (-1, -1):
+            # breadth first search for the apple using moves that keep the body in cycle order
             path = pathfind(self.position(), self.apple, self.cycleIndex, self.m, self.n)
             if path == []:
+                # nothing found, so take one step along the cycle and try again next move
                 path = [self.cycle[(self.cycleIndex[self.head] + 1) % (self.m * self.n)]]
             # print("position:", self.position())
             # print("path:", path)
             # # path = aStarSearch(self.position(), self.apple, self.cycle)
             # print(path)
         else:
+            # no apple left, the board is full, so just run out the rest of the cycle
             path = self.cycle[self.cyclePos + 1 : ] + [(0, 0)]
         self.moveQueue.extend(path)
 
@@ -72,6 +78,7 @@ class HamiltonianSnake:
         if len(self.moveQueue) == 0:
             self.findPath()
             
+        # old head becomes the neck, then drop the tail unless we ate the apple so the snake grows by one
         newHead = self.moveQueue.pop(0)
         self.trail = [self.head][:] + self.trail
         self.head = newHead

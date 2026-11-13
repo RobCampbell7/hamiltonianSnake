@@ -1,4 +1,5 @@
 
+# a search node is a whole snake, a tuple of cells with the head first, so two states with the same head but different bodies are kept apart
 class Node:
     def __init__(self, position):
         self.position = position
@@ -11,6 +12,7 @@ class Node:
         self.parent = parentNode
 
     def tracePath(self):
+        # walk back up the parents, giving the list of heads from the first move to this one
         if self.parent == None:
             return []
         else:
@@ -23,6 +25,8 @@ def insert(item, lst, key=lambda x : x, asc=True):
     return lst + [item]
 
 def nextSnakes(snakeBody, m, n):
+    # the up to four snakes one move on: new head, old head, then the body minus its tail.
+    # the tail cell is not blocked because it moves out of the way on the same step
     i, j = snakeBody[0]
     snakes = []
     if i != m - 1 and (i + 1, j) not in snakeBody[:-1]:
@@ -36,10 +40,14 @@ def nextSnakes(snakeBody, m, n):
     return snakes
 
 def isAllowed(body, cycleMap, m, n):
+    # cycle positions of the new head, the old head and the tail
     s = cycleMap[body[0]]
     h = cycleMap[body[1]]
     t = cycleMap[body[-1]]
 
+    # measure from the tail so the wrap round of the cycle does not matter. the move is only
+    # allowed if the new head is further along the cycle than the old head, which keeps the whole
+    # body in cycle order and so stops the snake ever running into itself
     h = (h - t) % (m * n)
     s = (s - t) % (m * n)
     # t = 0
@@ -62,6 +70,8 @@ def printSnake(body, apple, m, n):
     print(output)
 
 def pathfind(snakeBody, apple, cycleMap, m, n):
+    # breadth first search over snake states, so the first path found is the fewest moves.
+    # states are tuples so they can go in the visited set
     if type(snakeBody) != tuple:
         snakeBody = tuple(snakeBody)
     visited = set()

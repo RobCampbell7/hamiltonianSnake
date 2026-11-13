@@ -1,5 +1,6 @@
 from random import choice, randint, shuffle
 
+# cells are numbered row by row on an m wide, n tall grid, so index = y * m + x
 def indexToCoord(index, m, n):
     return (index % m, index // m)
 
@@ -7,6 +8,7 @@ def coordToIndex(x, y, m, n):
     return y * m + x
 
 def rotateCycle(cycle, m, n):
+    # swap x and y of every cell, for when the cycle was built on the grid the other way round
     newCycle = []
     for i in cycle:
         x, y = indexToCoord(i, m, n)
@@ -15,6 +17,10 @@ def rotateCycle(cycle, m, n):
     return newCycle
 
 def hamilCycleIndexes(m, n):
+    # the regular cycle: along the whole top row, zigzag down the rows below using columns 1 to m-1,
+    # then back up column 0 to the start. the zigzag has to finish next to column 0, which needs an
+    # odd number of rows below the top, so n must be even. if only m is even, build it the other way
+    # round and rotate the result. a grid with both sides odd has no hamiltonian cycle at all
     rotate = False
     if m % 2 == 1 and n % 2 == 1:
         raise Exception("m or n must have a factor of 2")
@@ -61,6 +67,7 @@ def coordsAreNeighbours(p0, p1, m, n):
         return False
 
 def isCorner(i, c, m, n):
+    # true if the i-th cell of the cycle is one of the four grid corners
     if c[i] == 0 or c[i] == m * n - 1 or c[i] == m * (n - 1) or c[i] == m - 1:
         return True
     else:
@@ -76,6 +83,7 @@ def printGrid(m, n):
     print(output)
 
 def areCycleAdjacent(i, j, c):
+    # consecutive in the cycle, counting the wrap round from the last cell back to the first
     if i not in c or j not in c:
         return False
     
@@ -87,6 +95,7 @@ def areCycleAdjacent(i, j, c):
         return False
 
 def printCycle(c, m, n):
+    # draws the grid of cell numbers with -- and | between cells that follow each other in the cycle
     numLength = str(len(str(m * n - 1)))
     output = ""
     for i in range(m * n):
@@ -121,6 +130,9 @@ def neighbours(i, m, n):
         yield i + m
 
 def splitCycle(c, m, n):
+    # cuts one cycle into two. pick an edge of the cycle (i1, i2) and a parallel edge (j1, j2)
+    # sitting right next to it, then reconnect across the gap so each half closes into its own
+    # cycle. corners are skipped because a corner cell only has two neighbours to begin with
     possibleIndexes = [
         i for i in range(m * n)
         if isCorner(i, c, m, n) == False and isCorner((i + 1) % (m * n), c, m, n) == False
@@ -148,6 +160,8 @@ def splitCycle(c, m, n):
         if found == True:
             break
 
+    # order the four cut points so the i edge comes first in the list, then c1 is the outer part
+    # of the list joined across the gap and c2 is the run in the middle
     if j1 < i1:
         i1, i2, j1, j2 = j1, j2, i1, i2
     if i2 > i1:
@@ -164,6 +178,7 @@ def neighboursPointInCycle(i, c, m, n):
             return True
     return False
 
+# rotate a list n places to the right or left
 def shiftListR(lst, n):
     if n <= 0:
         return lst
@@ -176,10 +191,13 @@ def shiftList(lst, n):
         return shiftList([*lst[1:], lst[0]], n - 1)
 
 def mergeCycles(c1, c2, m, n):
+    # joins the two cycles back into one. find an edge of c1 and an edge of c2 that lie side by
+    # side, break both, and splice the whole of c2 into c1 between them
     # c1 should be the list starting at zero
     if c1[0] != 0:
         c1, c2 = c2, c1
 
+    # edges of c1 where both ends have a neighbour somewhere in c2
     validNeighbouringIndexes = [
         i for i in range(len(c1)) if neighboursPointInCycle(c1[i], c2, m, n) and neighboursPointInCycle(c1[(i + 1)%len(c1)], c2, m, n)
     ]
@@ -209,6 +227,7 @@ def mergeCycles(c1, c2, m, n):
     if j2 == 0:
         j2 == len(c2)
 
+    # c2 rotated to start at j1 so it enters from c1[i1] and comes back out next to c1[i2]
     c = [
         *c1[0 : i1 + 1],
         *shiftList(c2, j1),
@@ -226,11 +245,13 @@ def isValidCycle(c, m, n):
     return True
 
 def mutateCycle(c, m, n):
+    # split and rejoin, which rewires a small patch of the cycle but keeps it hamiltonian
     c1, c2 = splitCycle(c, m, n)
     c = mergeCycles(c1, c2, m, n)
     return c
 
 def randHamilCycleIndexes(m, n):
+    # start from the regular cycle and mutate it a number of times to scramble it
     c = hamilCycleIndexes(m, n)
     for i in range(m*n // 2):
         c = mutateCycle(c, m, n)
